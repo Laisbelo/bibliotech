@@ -5,8 +5,10 @@ import { Toaster } from "react-hot-toast";
 import { BrowserRouter,Route, Routes } from "react-router-dom";
 import { AuthContext } from "./contexts/AuthContext";
 import { auth } from "./firebase/config";
+import { AdicionarLivro } from "./pages/AdicionarLivro/AdicionarLivro";
 import { Cadastro } from "./pages/Cadastro/Cadastro";
 import { Home } from "./pages/Home/Home";
+import { Livros } from "./pages/Livros/Livros";
 import { Login } from "./pages/Login/Login";
 import { Root } from "./pages/Root/Root";
 
@@ -32,6 +34,8 @@ export function App(){
                 <Routes>
                     <Route path="/" element={<Root/>}>
                         <Route path="/" element={<Home/>}></Route>
+                        <Route path="/livros" element={<Livros/>}/>
+                        <Route path="/livros/adicionar" element={<AdicionarLivro/>}/>
                     </Route>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/cadastro" element={<Cadastro/>}/>
