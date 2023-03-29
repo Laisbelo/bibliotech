@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { Link, Navigate } from "react-router-dom";
 import { Loader } from "../../components/Loader/Loader";
-import { getLivros } from "../../firebase/livros";
+import { deleteLivro, getLivros } from "../../firebase/livros";
 import "./Livros.css"
 
 export function Livros() {
@@ -10,10 +11,27 @@ export function Livros() {
     const [livros,setLivros] = useState(null);
     useEffect(() => {
         //buscar informações do banco
+        initializeTable();
+    },[]);
+
+    function initializeTable(){
         getLivros().then(busca =>{
             setLivros(busca)
         });
-    },[]);
+    }
+
+    function onDeleteLivro(id,titulo){
+        const deletar = window.confirm(`Tem certeza que deseja excluir o livro ${titulo}?`);
+        if(deletar){
+            //apagar o livro
+            deleteLivro(id).then(()=>{
+                toast.success(`${titulo} apagado com sucesso!`,{duration:2000, position:"bottom-right"});
+                getLivros().then(busca =>{
+                    setLivros(busca)
+                });
+            })
+        }
+    }
 
     return (
         <div className="livros">
@@ -62,7 +80,8 @@ export function Livros() {
                                 <Button 
                                 variant="danger" 
                                 size="sm"
-                                title="Apagar">
+                                title="Apagar"
+                                onClick={() => onDeleteLivro(livro.id,livro.titulo)}>
                                     <i className="bi bi-trash3-fill" 
                                     ></i>
                                 </Button>
