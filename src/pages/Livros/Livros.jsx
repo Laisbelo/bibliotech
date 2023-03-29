@@ -37,6 +37,7 @@ export function Livros() {
                 <th>Categoria</th>
                 <th>ISBN</th>
                 <th>Imagem</th>
+                <th>Açôes</th>
                 </tr>
             </thead>
                 {livros.map((livro)=>{
@@ -48,6 +49,24 @@ export function Livros() {
                             <td>{livro.categoria}</td>
                             <td>{livro.isbn}</td>
                             <td><img src={livro.urlcapa} alt={livro.titulo}/></td>
+                            <td>
+                                <Button 
+                                as={Link} 
+                                to={`/livros/editar/${livro.id}`}
+                                variant="warning"
+                                size="sm"
+                                className="me-1"
+                                title="Editar">
+                                    <i className="bi bi-pencil-fill"></i>
+                                </Button>
+                                <Button 
+                                variant="danger" 
+                                size="sm"
+                                title="Apagar">
+                                    <i className="bi bi-trash3-fill" 
+                                    ></i>
+                                </Button>
+                            </td>
                         </tr>
                         </tbody>
                     )
