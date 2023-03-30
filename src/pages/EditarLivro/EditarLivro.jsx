@@ -3,20 +3,37 @@ import { Button, Container, Form} from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import {useNavigate, useParams } from "react-router";
-import { getLivro, updateLivro } from "../../firebase/livros";
+import {getLivro, updateLivro, uploadCapaLivro } from "../../firebase/livros";
 
 export function EditarLivro(){
     const {id} = useParams();
+
     
 
     const {register,handleSubmit,formState:{errors},reset} = useForm();
     const navigate = useNavigate();
 
-    function onSubmit(data){
-        updateLivro(id, data).then(()=>{
-            toast.success("Livro editado com sucesso",{duration:2000, position:"bottom-right"})
-            navigate("/livros")
-        })
+    function onSubmit(data) {
+        const imagem = data.imagem[0];
+
+        if (imagem) {
+            const toastId = toast.loading("Upload da imagem...", { position: "top-center" });
+            uploadCapaLivro(imagem).then(url => {
+                toast.dismiss(toastId);
+                data.urlcapa = url;
+                delete data.imagem;
+                updateLivro(id, data).then(() => {
+                    toast.success("Livro editado com sucesso!", { duration: 2000, position: "bottom-right" })
+                    navigate("/livros");
+                })
+            });
+        } else {
+            delete data.imagem;
+            updateLivro(id, data).then(() => {
+                toast.success("Livro editado com sucesso!", { duration: 2000, position: "bottom-right" })
+                navigate("/livros");
+            })
+        }
     }
 
     useEffect(()=>{
@@ -61,10 +78,7 @@ export function EditarLivro(){
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Capa do Livro</Form.Label>
-                        <Form.Control  className={errors.urlcapa && "is-invalid"} type="url"{...register("urlcapa",{required:"O endereço da capa é obrigatório!"})}/>
-                        <Form.Text className="text-danger">
-                            {errors.urlcapa?.message}
-                        </Form.Text>
+                        <Form.Control type="file"{...register("imagem")}/>
                     </Form.Group>
                     <Button type="submit" variant="success">Editar</Button>
                 </Form>

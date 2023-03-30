@@ -1,5 +1,7 @@
 import { addDoc, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { livrosCollection } from "./collections";
+import {storage} from "./config"
 
 export async function addLivro(data){
     await addDoc(livrosCollection,data)
@@ -27,3 +29,10 @@ export async function updateLivro(id,data){
 export async function deleteLivro(id){
     await deleteDoc(doc(livrosCollection,id))
 }
+
+export async function uploadCapaLivro(imagem){ //upload de imagem do computador no banco de dados
+    const filename = imagem.name;
+    const imageRef = ref(storage,`/livros/${filename}`);
+    const result = await uploadBytes(imageRef,imagem);
+    return await getDownloadURL(result.ref);
+} 
